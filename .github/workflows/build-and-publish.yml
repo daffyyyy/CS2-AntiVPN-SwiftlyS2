@@ -1,0 +1,73 @@
+# This workflow builds a .NET project and publishes artifacts
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Build and Publish
+
+env:
+  PLUGIN_NAME: CS2-AntiVPN
+  PLUGIN_SOURCE_FILE: CS2-AntiVPN/src/CS2-AntiVPN.cs
+  PLUGIN_BUILD_DIR: CS2-AntiVPN/build
+  PLUGIN_ZIP_NAME: CS2_AntiVPN.zip
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Get Version from PluginMetadata
+      id: get_version
+      run: |
+        VERSION=$(grep -oP 'Version = "\K[^"]+' ${{ env.PLUGIN_SOURCE_FILE }})
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Plugin version: $VERSION"
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Publish
+      run: dotnet publish -c Release
+
+    - name: Upload artifact to GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: CS2-AntiVPN-${{ steps.get_version.outputs.version }}
+        path: CS2-AntiVPN/build/CS2_AntiVPN.zip
+        retention-days: 30
+
+  publish:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: CS2-AntiVPN-${{ needs.build.outputs.version }}
+        path: ./release
+
+    - name: Create Release
+      uses: ncipollo/release-action@v1.14.0
+      with:
+        tag: v${{ needs.build.outputs.version }}
+        name: CS2-AntiVPN v${{ needs.build.outputs.version }}
+        artifacts: ./release/CS2_AntiVPN.zip

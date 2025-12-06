@@ -6,9 +6,9 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/build-passing-brightgreen" alt="Build Status">
-  <img src="https://img.shields.io/github/downloads/daffyy/CS2_AntiVPN/total" alt="Downloads">
-  <img src="https://img.shields.io/github/stars/daffyy/CS2_AntiVPN?style=flat&logo=github" alt="Stars">
-  <img src="https://img.shields.io/github/license/daffyy/CS2_AntiVPN" alt="License">
+  <img src="https://img.shields.io/github/downloads/daffyyyy/CS2-AntiVPN-SwiftlyS2/total" alt="Downloads">
+  <img src="https://img.shields.io/github/stars/daffyyyy/CS2-AntiVPN-SwiftlyS2?style=flat&logo=github" alt="Stars">
+  <img src="https://img.shields.io/github/license/daffyyyy/CS2-AntiVPN-SwiftlyS2" alt="License">
 </p>
 
 ## Installation
